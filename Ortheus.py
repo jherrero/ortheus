@@ -1,45 +1,42 @@
-#!/usr/bin/env python
-
-#Copyright (C) 2008-2011 by Benedict Paten (benedictpaten@gmail.com)
-#
-#Released under the MIT license, see LICENSE.txt
+#!/usr/local/bin/python
 
 import sys
 import os
 import re
 import time
 
-from ortheus.old.Nester import nestAlign
-from ortheus.old.Nester import addDefaultNesterArgs
-from ortheus.old.Nester import parseMods as parseModsNester
-from ortheus.old.Nester import printMods as printModsNester
+from ortheus.scripts.Nester import nestAlign
+from ortheus.scripts.Nester import addDefaultNesterArgs
+from ortheus.scripts.Nester import parseMods as parseModsNester
+from ortheus.scripts.Nester import printMods as printModsNester
 
-from ortheus.old.Stitcher import addDefaultStitcherArgs
-from ortheus.old.Stitcher import parseMods as parseModsStitcher
-from ortheus.old.Stitcher import printMods as printModsStitcher
+from ortheus.scripts.Stitcher import addDefaultStitcherArgs
+from ortheus.scripts.Stitcher import parseMods as parseModsStitcher
+from ortheus.scripts.Stitcher import printMods as printModsStitcher
 
-from ortheus.old.EstimateTree import addDefaultEstimateTreeArgs
-from ortheus.old.EstimateTree import parseEstimateTreeMods
-from ortheus.old.EstimateTree import printEstimateTreeMods
-from ortheus.old.EstimateTree import estimateTreeAlign
+from ortheus.scripts.EstimateTree import addDefaultEstimateTreeArgs
+from ortheus.scripts.EstimateTree import parseEstimateTreeMods
+from ortheus.scripts.EstimateTree import printEstimateTreeMods
+from ortheus.scripts.EstimateTree import estimateTreeAlign
 
-from ortheus.old.bioio import removeMod
-from ortheus.old.bioio import getDefaultLogger 
-from ortheus.old.bioio import newickTreeParser
-from ortheus.old.bioio import getDefaultArgs
-from ortheus.old.bioio import parseVarArgs
-from ortheus.old.bioio import printBinaryTree
-from ortheus.old.bioio import logger
-from ortheus.old.bioio import loggerIndices
-from ortheus.old.bioio import printFirstMods
-from ortheus.old.bioio import parseFirstMods
-from ortheus.old.bioio import printMod
-from ortheus.old.bioio import dNAMap_IUPACToInt
-from ortheus.old.bioio import fastaRead
+from benLib.bioio import removeMod
+from benLib.bioio import getDefaultLogger
+from benLib.bioio import newickTreeParser
+from benLib.bioio import getDefaultArgs
+from benLib.bioio import parseVarArgs
+from benLib.bioio import printBinaryTree
+from benLib.bioio import logger
+from benLib.bioio import loggerIndices
+from benLib.bioio import printFirstMods
+from benLib.bioio import parseFirstMods
+from benLib.bioio import printMod
+from ortheus.localLib.misc import ortheusRootPath
+from benLib.bioio import dNAMap_IUPACToInt
+from benLib.bioio import fastaRead
 
-from ortheus.old.tree import calculateCharacterFrequencies
-from ortheus.old.tree import normaliseWV
-from ortheus.old.tree import sumWVA
+from benLib.tree import calculateCharacterFrequencies
+from benLib.tree import normaliseWV
+from benLib.tree import sumWVA
 
 VERSION_NO="0.5.0"
 
@@ -113,6 +110,7 @@ def main():
     addDefaultStitcherArgs(alignerArgs)
     addDefaultNesterArgs(alignerArgs)
     addDefaultEstimateTreeArgs(alignerArgs)
+    ortheusPath = ortheusRootPath()
     i = loggerIndices
     removeReservedIndices(i, alignerArgs)
     if len(sys.argv) < 3:
@@ -127,10 +125,10 @@ def main():
         i = printModsNester(alignerArgs, i)
         i = printEstimateTreeMods(alignerArgs, i)
         print "-------------Ortheus help string as follows (Changing these arguments may break the script)-------------"
-        os.system("ortheus_core")
+        os.system("%s/bin/OrtheusC" % ortheusPath)
         print "-------------End Ortheus help string-------------"
         print "-------------Pecan help string as follows (Changing these arguments may break the script)-------------"
-        os.system("%s bp.pecan.Pecan -help" % (alignerArgs.JAVA_PREFIX,))
+        os.system("%s -cp %s/src/python/ortheus/localLib/pecan.jar bp.pecan.Pecan -help" % (alignerArgs.JAVA_PREFIX, ortheusPath))
         print "-------------End Pecan help string-------------"
         sys.exit(0)
         

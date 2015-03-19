@@ -1,43 +1,30 @@
-rootPath = ./
-include ./include.mk
+makefile:
 
-all : ${binPath}/ortheus_core ${binPath}/Ortheus.py
+all : clean bin/OrtheusC
 
-#These are parameters for composing/compiling the graph
-
-#Use this line to point at a graphviz tool
-makeGraph = dot
-
-#This parameter can be adjusted (>=1) to control the silent-state number vs. the
-#number of transitions.
-collapseCoefficient = 1000 
-
-#The location of the model files used
-modelPath = ./models
-model = ${modelPath}/affineModel.sxpr
-paramModel = ${modelPath}/affineModel.param
+#Ortheus make file
  
+cxx = gcc
+
+#Release compiler flags
+#cflags = -O3 -Wall -funroll-loops -lm
+
+#Debug flags
+cflags = -Wall -W -fno-inline -lm -g
+
+#Profile flags
+#cflags = -Wall -W -pg -lm
+
+
+lP = src/c/ortheus
+libSources = ${lP}/bioioC.c ${lP}/commonC.c ${lP}/fastCMaths.c ${lP}/hashTableC.c ${lP}/heapC.c ${lP}/substitutionC.c
+libHeaders = ${lP}/bioioC.h ${lP}/commonC.h ${lP}/fastCMaths.h ${lP}/hashTableC.h ${lP}/hashTablePrivateC.h ${lP}/heapC.h ${lP}/substitutionC.h
+
+sources = src/c/ortheus/constraintsC.c src/c/ortheus/OrtheusC.c src/c/ortheus/sequenceGraphC.c src/c/ortheus/xyzModelC.c ${libSources}
+headers = src/c/ortheus/constraintsC.h src/c/ortheus/sequenceGraphC.h src/c/ortheus/xyzModelC.h ${libHeaders}
+
 clean :
-	rm -f ${binPath}/ortheus_core model.otra xyzModelC.c xyzModelC.h ${binPath}/Ortheus.py
-
-${binPath}/Ortheus.py : Ortheus.py old/Nester.py old/Stitcher.py old/EstimateTree.py old/bioio.py old/tree.py old/misc.py
-	cp Ortheus.py ${binPath}/Ortheus.py
-	chmod +x ${binPath}/Ortheus.py
-
-${binPath}/ortheus_core : *.c *.h xyzModelC.c xyzModelC.h ${basicLibsDependencies}
-	${cxx} ${cflags} -I ${libPath} -o ${binPath}/ortheus_core *.c ${basicLibs} -lm
-
-# stdin from </dev/null works around stray stdin read on OS/X that hangs backgroud
-# jobs
-xyzModelC.c xyzModelC.h : ${model} ${paramModel} TransducerComposer.py TransducerCompiler.py
-	rm -f model.otra xyzModelC.c xyzModelC.h ${modelPath}/model.dot ${modelPath}/ortheusmodel.pdf
-	python TransducerComposer.py ${model} temp.otra ${modelPath}/model.dot ${collapseCoefficient} </dev/null
-	cat  ${paramModel} temp.otra > model.otra
-	rm temp.otra
-	python  TransducerCompiler.py model.otra xyzModelC.c xyzModelC.h </dev/null
-	#Use this line if you want the pretty picture
-	#${makeGraph} ${modelPath}/model.dot -Tpdf > ${modelPath}/model.pdf
-  
-test :
-	#Running python allTests.py
-	PYTHONPATH=.. PATH=../../bin:$$PATH python allTests.py --testLength=SHORT --logDebug
+	rm -f bin/OrtheusC
+	
+bin/OrtheusC : ${sources} ${headers}
+	${cxx} ${cflags} -o bin/OrtheusC src/c/ortheus/*.c

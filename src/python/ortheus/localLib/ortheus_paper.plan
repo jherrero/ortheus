@@ -1,0 +1,34 @@
+encode cftr dataset-
+
+compare alignment tuning em
+
+compare sample rates
+
+compare relax rates
+
+compare stitch parameters
+
+indel/sub rates for cftr
+
+
+New to-dos:
+
+run simulation alignment comparison dataset .. on pecan new / ortheus new 
+re run cross validation experiment + mlagan/ortheus
+re-run above training things
+get laurence sequences
+pretty indel-pictures
+accuracy of the reconstruction along the (human) sequence, with encode elements put in.
+
+fix tree building
+get new version to people.. (with updated results)
+
+do simulation for ortheus vs. indelign (use blanchette simulations)
+update pecan text
+update ortheus text
+
+
+insert rate - window
+delete rate - window
+reconstruction-rate - window
+
